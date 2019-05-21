@@ -14,6 +14,41 @@
 
 #include "Kart_Structs.h"
 
+int valida_data(int dia, int mes, int ano){
+    int bissexto = 0, valida = 1;
+ 
+    if (ano >= 1900 && ano <= 9999){
+        if ((ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0)){          // verifica se o ano é bissexto ou não
+            bissexto = 1;
+        }
+        if(mes >= 1 && mes <= 12){                                          // verifica se o mes está entre 1 e 12
+            if (mes == 2){                                                  // verifica os dias em Fevereiro
+                if (bissexto && dia == 29){
+                    valida = 1;
+                }else if (dia > 28){
+                    valida = 0;
+                }
+            }else if (mes == 4 || mes == 6 || mes == 9 || mes == 11){       // verifica os meses com 30 dias
+                if (dia > 30 || dia <= 0){
+                    valida = 0;
+                }
+            }else if(dia > 31 || dia <= 0){                                 // verifica os meses com 31 dias
+                valida = 0;
+            }
+        }else{
+            valida = 0;
+        }
+    }else{
+        valida = 0;
+    }
+    
+    if(valida){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
 //contador de pilotos no ficheiro
 int tam_vetor_pilotos(char *fichpilotos){
     
@@ -109,6 +144,36 @@ pPiloto vetor_pilotos(char *nomefich, int *tam){
                 exit(0);
             }
         }
+        if(strlen(novo.nome) > 100){
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Nome %s excede os 100 caracteres no piloto com ID %d)\n", nomefich, novo.nome, novo.id);
+            fclose(f);
+            free(vPiloto);
+            exit(0);
+        }
+        if(valida_data(novo.data_nasc.dia, novo.data_nasc.mes, novo.data_nasc.ano) == 0){
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Data %d/%d/%d invalida no piloto com ID %d)\n", nomefich, novo.data_nasc.dia, novo.data_nasc.mes, novo.data_nasc.ano, novo.id);
+            fclose(f);
+            free(vPiloto);
+            exit(0);
+        }
+        if(novo.peso <= 0){
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Peso %d invalido no piloto com ID %d)\n", nomefich, novo.peso, novo.id);
+            fclose(f);
+            free(vPiloto);
+            exit(0);
+        }
+        if(novo.impedimento < 0 || novo.impedimento > 3){
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Impedimento %d invalido no piloto com ID %d)\n", nomefich, novo.peso, novo.id);
+            fclose(f);
+            free(vPiloto);
+            exit(0);
+        }
+        if(novo.exp < 0){
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Experiencia %d invalida no piloto com ID %d)\n", nomefich, novo.exp, novo.id);
+            fclose(f);
+            free(vPiloto);
+            exit(0);
+        }
 #ifdef deb
         printf("\n%s\n %d %d %d %d %d %.1f %d\n", novo.nome, novo.id, novo.data_nasc.dia, novo.data_nasc.mes, novo.data_nasc.ano, novo.peso, novo.exp, novo.impedimento);
 #endif
@@ -154,10 +219,29 @@ pCarro vetor_carros(char *nomefich, int *tam){
             free(vCarro);
             return vCarro;
         }
+        for(int j = 0; j < i; j++){
+            if(novo.id == vCarro[j].id){
+                printf("\n[Erro] Parametros do ficheiro %s incorretos! (ID %d repetido)\n",nomefich, novo.id);
+                fclose(f);
+                free(vCarro);
+                exit(0);
+            }
+        }
+        if(novo.pot <= 0){
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Potencia %d invalida no carro com ID %d)\n", nomefich, novo.pot, novo.id);
+            fclose(f);
+            free(vCarro);
+            exit(0);
+        }
+        if(novo.avaria != 0 || novo.avaria != 1){
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Avaria %d invalida no carro com ID %d)\n", nomefich, novo.avaria, novo.id);
+            fclose(f);
+            free(vCarro);
+            exit(0);
+        }
 #ifdef deb
         printf("\n%d %d %d\n", novo.id, novo.pot, novo.avaria);
 #endif
-        
         vCarro[i] = novo;
     }
     
