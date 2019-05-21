@@ -1,12 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-#include "Kart_Structs.h"
-
-
 /* 
  * File:   Corridas.c
  * Author: Bruno Miguel Gariso Andrade Rodrigues
@@ -14,11 +5,28 @@
  * 
  */
 
-pTreino configuracao_corrida_treino(pTreino corrida){
+#include "Corridas.h"
+
+
+//funcao onde e realizado o emparelhamento de carros com pilotos antes de cada corrida
+void emparelhamento_pre_corrida(treino *t, pPiloto vpilotos,  int n_pilotos, pCarro vcarros, int n_carros){
+#ifdef deb
+    printf("NP: %d  | NC: %d \nn_voltas: %d | capacidade: %d | comp: %d\n", n_pilotos, n_carros, t->n_voltas, t->capacidade, t->comprimento);
+#endif
+    if(t->n_voltas >
+}
+
+//funcao onde e exigida uma configuracao inicial para cada corrida
+pTreino configuracao_corrida_treino(pTreino corrida, pPiloto vp, int *t_p, pCarro vc, int *t_c){
     treino t;
-    pTreino nova = NULL;
+    pTreino nova, aux;
     system("cls");
     
+    nova = malloc(sizeof(treino));
+    if(nova == NULL){
+        printf("[Erro] Alocacao de memoria...\n");
+        return corrida;
+    }
     printf("\n      Configuracoes da corrida de treino:\n");
     do{
         printf("\nNumero de voltas: ");
@@ -41,16 +49,31 @@ pTreino configuracao_corrida_treino(pTreino corrida){
             printf("\n[ERRO] Capacidade da pista invalida! Tem de ser superior a 0 carros...");
         }
     }while(t.capacidade <= 0);
-    nova = t;
+    
+    emparelhamento_pre_corrida(&t, vp, *t_p, vc, *t_c);
+    
+    exit(0);
+    nova->capacidade = t.capacidade;
+    nova->comprimento = t.comprimento;
+    nova->n_voltas = t.n_voltas;
+    nova->prox = NULL;
+    
+    if(corrida == NULL){
+        corrida = nova;
+    }else{
+        aux = corrida;
+        while(aux->prox != NULL){
+            aux = aux->prox;
+        }
+        aux->prox = nova;
+    }
     return corrida;
 }
 
-
-
-pTreino treino(pTreino corrida){
+//funcao onde e executada uma corrida individual (treino)
+pTreino corrida_individual(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c){
     
-    corrida = configuracao_corrida_treino(corrida);
-    
-    
+    printf("NP: %d  | NC: %d \n", *tam_p, *tam_c);
+    corrida = configuracao_corrida_treino(corrida, vpilotos, tam_p, vcarros, tam_c);
     return corrida;
 }

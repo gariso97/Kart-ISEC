@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /* 
  * File:   main.c
  * Author: Bruno Miguel Gariso Andrade Rodrigues
@@ -12,6 +6,7 @@
  */
 
 #include "Corridas.h"
+
 
 //funcao que valida uma determinada data
 int valida_data(int dia, int mes, int ano){
@@ -193,7 +188,6 @@ pCarro vetor_carros(char *nomefich, int *tam){
     int i;
     
     *tam = tam_vetor_carros(nomefich);
-    
     FILE *f = fopen(nomefich, "rt");
     if(!f){
         printf("\n[ERRO] Abertura do ficheiro %s falhada!\n",nomefich);
@@ -233,7 +227,7 @@ pCarro vetor_carros(char *nomefich, int *tam){
             free(vCarro);
             exit(0);
         }
-        if(novo.avaria != 0 || novo.avaria != 1){
+        if(novo.avaria < 0 || novo.avaria > 1){
             printf("\n[Erro] Parametros do ficheiro %s incorretos! (Avaria %d invalida no carro com ID %d)\n", nomefich, novo.avaria, novo.id);
             fclose(f);
             free(vCarro);
@@ -360,21 +354,25 @@ int terminaProg(char *fichpilotos, char *fichcarros, pPiloto vpilotos, int *tam_
 
 //funcao principal, onde comeca o programa e e' apresentado o menu principal
 int main(int argc, char** argv) {
-
+    
+/*
+    testes();
+    exit(0);
+*/
+    
     int op, tam_pilotos = 0, tam_carros = 0;
-
     pPiloto vPilotos = NULL;
     pCarro vCarros = NULL;
     pTreino corrida_treino = NULL;
-
     char *pilotosTxt = "Pilotos.txt";
     char *carrosTxt = "Carros.txt";
-
+    
     logotipo();
     printf("\n\n     Pressione ENTER para continuar...");
     fflush(stdin);
     getchar();
     
+    initRandom();
     //Carregar pilotos e carros dos ficheiros txt
     vPilotos = vetor_pilotos(pilotosTxt, &tam_pilotos);
     vCarros = vetor_carros(carrosTxt, &tam_carros);
@@ -407,7 +405,7 @@ int main(int argc, char** argv) {
                 mostraVetores(vCarros, &tam_carros, NULL, NULL, 0);
                 break;
             case 3:
-                corrida_treino = treino(corrida_treino);
+                corrida_treino = corrida_individual(corrida_treino, vPilotos, &tam_pilotos, vCarros, &tam_carros);
                 break;
             case 4:
                 //campeonato();

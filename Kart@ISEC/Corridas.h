@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /* 
  * File:   Corridas.h
  * Author: Bruno Miguel Gariso Andrade Rodrigues
@@ -22,7 +16,7 @@
 extern "C" {
 #endif
 
-    pTreino treino(pTreino corrida);
+    pTreino corrida_individual(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c);
 
 
 

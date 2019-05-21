@@ -6,7 +6,7 @@
 #include <time.h>
 #include <limits.h>
 
-#include "utils.h"
+#include "Corridas.h"
 
 void initRandom(){
     srand(time(NULL));
@@ -22,8 +22,7 @@ int probEvento(float prob){
 
 void espera(unsigned int seg){
     unsigned int goal = seg + clock()/CLOCKS_PER_SEC;
-    while (goal > clock()/CLOCKS_PER_SEC)
-        ;
+    while (goal > clock()/CLOCKS_PER_SEC);
 }
 
 void obtemData(int *dia, int *mes, int *ano, int *h, int *m, int *s){
@@ -44,7 +43,6 @@ int calculaSegundos(int idadeP, int pesoP, float expP, int PotC, int metros){
     return metros/20 + min(3, max(1, 20-expP))*intUniformRnd(1,3)
             + (float)pesoP/idadeP*intUniformRnd(1,2) + 500.0*(intUniformRnd(1,2))/PotC;
 }
-
 
 // Função com alguns exemplos simples de utilizacao das funcoes
 void testes(){
