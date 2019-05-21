@@ -6,7 +6,6 @@
 #include <time.h>
 #include <limits.h>
 
-
 #include "utils.h"
 
 void initRandom(){

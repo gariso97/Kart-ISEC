@@ -5,11 +5,10 @@
  */
 
 /* 
- * File:   BD.h
+ * File:   Kart_Structs.h
  * Author: Bruno Miguel Gariso Andrade Rodrigues
  * Number: 21250105
  *
- * Created on 1 de Abril de 2019, 18:24
  */
 
 #ifndef KART_STRUCTS_H
@@ -19,7 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ST_TAM 100
+#define ST_TAM 105
 
 //#define deb
 
@@ -47,6 +46,14 @@ extern "C" {
         int pot;
         int avaria;
     }carro, *pCarro;
+    
+    typedef struct Treinos treino, *pTreino;
+    struct Treinos{
+        int n_voltas;
+        int comprimento;
+        int capacidade;
+        pTreino prox;
+    };
 
 #ifdef __cplusplus
 }

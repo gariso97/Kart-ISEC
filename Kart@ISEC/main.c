@@ -9,10 +9,9 @@
  * Author: Bruno Miguel Gariso Andrade Rodrigues
  * Number: 21250105
  *
- * Created on 20 de Março de 2019, 10:58
  */
 
-#include "Kart_Structs.h"
+#include "Corridas.h"
 
 //funcao que valida uma determinada data
 int valida_data(int dia, int mes, int ano){
@@ -170,7 +169,7 @@ pPiloto vetor_pilotos(char *nomefich, int *tam){
             exit(0);
         }
         if(novo.exp < 0){
-            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Experiencia %d invalida no piloto com ID %d)\n", nomefich, novo.exp, novo.id);
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Experiencia %.2f invalida no piloto com ID %d)\n", nomefich, novo.exp, novo.id);
             fclose(f);
             free(vPiloto);
             exit(0);
@@ -366,6 +365,7 @@ int main(int argc, char** argv) {
 
     pPiloto vPilotos = NULL;
     pCarro vCarros = NULL;
+    pTreino corrida_treino = NULL;
 
     char *pilotosTxt = "Pilotos.txt";
     char *carrosTxt = "Carros.txt";
@@ -407,7 +407,7 @@ int main(int argc, char** argv) {
                 mostraVetores(vCarros, &tam_carros, NULL, NULL, 0);
                 break;
             case 3:
-                //treino();
+                corrida_treino = treino(corrida_treino);
                 break;
             case 4:
                 //campeonato();
