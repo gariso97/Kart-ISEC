@@ -14,6 +14,7 @@
 
 #include "Kart_Structs.h"
 
+//funcao que valida uma determinada data
 int valida_data(int dia, int mes, int ano){
     int bissexto = 0, valida = 1;
  
@@ -279,6 +280,7 @@ void mostraVetores(pCarro vCarro, int *tam_Carros, pPiloto vPiloto, int *tam_Pil
     return;
 }
 
+//funcao que imprime o logotipo do programa
 void logotipo(){
     
     printf("\n#-------------------------------------------#");
@@ -287,6 +289,7 @@ void logotipo(){
     return;
 }
 
+//funcao que grava os pilotos no ficheiro indicado
 void grava_fich_pilotos(char *nomefich, pPiloto vPilotos, int tam){
     
     int i;
@@ -305,6 +308,7 @@ void grava_fich_pilotos(char *nomefich, pPiloto vPilotos, int tam){
     fclose(fp);
 }
 
+//funcao que grava os carros no ficheiro indicado
 void grava_fich_carros(char *nomefich, pCarro vCarros, int tam){
     
     int i;
@@ -323,6 +327,7 @@ void grava_fich_carros(char *nomefich, pCarro vCarros, int tam){
     fclose(fc);
 }
 
+//funcao que da a escolher ao utilizador se pretende terminar o programa ou nao
 int terminaProg(char *fichpilotos, char *fichcarros, pPiloto vpilotos, int *tam_pilotos, pCarro vcarros, int *tam_carros) {
 
     int sair;
@@ -354,6 +359,7 @@ int terminaProg(char *fichpilotos, char *fichcarros, pPiloto vpilotos, int *tam_
     } while (sair != 1 || sair != 2);
 }
 
+//funcao principal, onde comeca o programa e e' apresentado o menu principal
 int main(int argc, char** argv) {
 
     int op, tam_pilotos = 0, tam_carros = 0;
