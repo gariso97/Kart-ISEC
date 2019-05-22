@@ -59,7 +59,7 @@ int tam_vetor_pilotos(char *fichpilotos){
         getchar();
         exit(0);
     }
-    while(fscanf(fp,"%99[^\n] %d %d %d %d %d %f %d\n", existe.nome, &existe.id, &existe.data_nasc.dia, &existe.data_nasc.mes, &existe.data_nasc.ano, &existe.peso, &existe.exp, &existe.impedimento) == 8){
+    while(fscanf(fp,"%99[^\n] %d %d %d %d %d %f %d\n", existe.nome, &existe.idP, &existe.data_nasc.dia, &existe.data_nasc.mes, &existe.data_nasc.ano, &existe.peso, &existe.exp, &existe.impedimento) == 8){
         i++;
     }
 #ifdef deb
@@ -86,7 +86,7 @@ int tam_vetor_carros(char *fichcarros){
         exit(0);
     }
     
-    while(fscanf(fc,"%d %d %d\n", &existe.id, &existe.pot, &existe.avaria) == 3){
+    while(fscanf(fc,"%d %d %d\n", &existe.idC, &existe.pot, &existe.avaria) == 3){
         i++;
     }
     
@@ -125,52 +125,52 @@ pPiloto vetor_pilotos(char *nomefich, int *tam){
             fclose(f);
             return vPiloto;
         }
-        if(fscanf(f,"%99[^\n] %d %d %d %d %d %f %d\n", novo.nome, &novo.id, &novo.data_nasc.dia, &novo.data_nasc.mes, &novo.data_nasc.ano, &novo.peso, &novo.exp, &novo.impedimento) != 8){     //le o ficheiro
+        if(fscanf(f,"%99[^\n] %d %d %d %d %d %f %d\n", novo.nome, &novo.idP, &novo.data_nasc.dia, &novo.data_nasc.mes, &novo.data_nasc.ano, &novo.peso, &novo.exp, &novo.impedimento) != 8){     //le o ficheiro
             printf("\n[Erro] Leitura do ficheiro %s falhada! Formato Incorreto!!\n",nomefich);
             fclose(f);
             free(vPiloto);
             exit(0);
         }
         for(int j = 0; j < i; j++){
-            if(novo.id == vPiloto[j].id){
-                printf("\n[Erro] Parametros do ficheiro %s incorretos! (ID %d repetido)\n",nomefich, novo.id);
+            if(novo.idP == vPiloto[j].idP){
+                printf("\n[Erro] Parametros do ficheiro %s incorretos! (ID %d repetido)\n",nomefich, novo.idP);
                 fclose(f);
                 free(vPiloto);
                 exit(0);
             }
         }
         if(strlen(novo.nome) > 100){
-            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Nome %s excede os 100 caracteres no piloto com ID %d)\n", nomefich, novo.nome, novo.id);
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Nome %s excede os 100 caracteres no piloto com ID %d)\n", nomefich, novo.nome, novo.idP);
             fclose(f);
             free(vPiloto);
             exit(0);
         }
         if(valida_data(novo.data_nasc.dia, novo.data_nasc.mes, novo.data_nasc.ano) == 0){
-            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Data %d/%d/%d invalida no piloto com ID %d)\n", nomefich, novo.data_nasc.dia, novo.data_nasc.mes, novo.data_nasc.ano, novo.id);
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Data %d/%d/%d invalida no piloto com ID %d)\n", nomefich, novo.data_nasc.dia, novo.data_nasc.mes, novo.data_nasc.ano, novo.idP);
             fclose(f);
             free(vPiloto);
             exit(0);
         }
         if(novo.peso <= 0){
-            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Peso %d invalido no piloto com ID %d)\n", nomefich, novo.peso, novo.id);
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Peso %d invalido no piloto com ID %d)\n", nomefich, novo.peso, novo.idP);
             fclose(f);
             free(vPiloto);
             exit(0);
         }
         if(novo.impedimento < 0 || novo.impedimento > 3){
-            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Impedimento %d invalido no piloto com ID %d)\n", nomefich, novo.peso, novo.id);
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Impedimento %d invalido no piloto com ID %d)\n", nomefich, novo.peso, novo.idP);
             fclose(f);
             free(vPiloto);
             exit(0);
         }
         if(novo.exp < 0){
-            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Experiencia %.2f invalida no piloto com ID %d)\n", nomefich, novo.exp, novo.id);
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Experiencia %.2f invalida no piloto com ID %d)\n", nomefich, novo.exp, novo.idP);
             fclose(f);
             free(vPiloto);
             exit(0);
         }
 #ifdef deb
-        printf("\n%s\n %d %d %d %d %d %.1f %d\n", novo.nome, novo.id, novo.data_nasc.dia, novo.data_nasc.mes, novo.data_nasc.ano, novo.peso, novo.exp, novo.impedimento);
+        printf("\n%s\n %d %d %d %d %d %.1f %d\n", novo.nome, novo.idP, novo.data_nasc.dia, novo.data_nasc.mes, novo.data_nasc.ano, novo.peso, novo.exp, novo.impedimento);
 #endif
         vPiloto[i] = novo;
     }
@@ -207,34 +207,34 @@ pCarro vetor_carros(char *nomefich, int *tam){
             fclose(f);
             return vCarro;
         }
-        if(fscanf(f,"%d %d %d\n", &novo.id, &novo.pot, &novo.avaria) != 3){     //le o ficheiro
+        if(fscanf(f,"%d %d %d\n", &novo.idC, &novo.pot, &novo.avaria) != 3){     //le o ficheiro
             printf("[Erro] Leitura do ficheiro %s falhada! Formato Incorreto!!",nomefich);
             fclose(f);
             free(vCarro);
             return vCarro;
         }
         for(int j = 0; j < i; j++){
-            if(novo.id == vCarro[j].id){
-                printf("\n[Erro] Parametros do ficheiro %s incorretos! (ID %d repetido)\n",nomefich, novo.id);
+            if(novo.idC == vCarro[j].idC){
+                printf("\n[Erro] Parametros do ficheiro %s incorretos! (ID %d repetido)\n",nomefich, novo.idC);
                 fclose(f);
                 free(vCarro);
                 exit(0);
             }
         }
         if(novo.pot <= 0){
-            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Potencia %d invalida no carro com ID %d)\n", nomefich, novo.pot, novo.id);
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Potencia %d invalida no carro com ID %d)\n", nomefich, novo.pot, novo.idC);
             fclose(f);
             free(vCarro);
             exit(0);
         }
         if(novo.avaria < 0 || novo.avaria > 1){
-            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Avaria %d invalida no carro com ID %d)\n", nomefich, novo.avaria, novo.id);
+            printf("\n[Erro] Parametros do ficheiro %s incorretos! (Avaria %d invalida no carro com ID %d)\n", nomefich, novo.avaria, novo.idC);
             fclose(f);
             free(vCarro);
             exit(0);
         }
 #ifdef deb
-        printf("\n%d %d %d\n", novo.id, novo.pot, novo.avaria);
+        printf("\n%d %d %d\n", novo.idC, novo.pot, novo.avaria);
 #endif
         vCarro[i] = novo;
     }
@@ -255,7 +255,7 @@ void mostraVetores(pCarro vCarro, int *tam_Carros, pPiloto vPiloto, int *tam_Pil
         printf("\n#--------------------------------------------#");
         printf("\n\tID\tPotencia\tAvaria\t\n");
         for(i = 0; i < (*tam_Carros); i++){
-            printf("\n\t%d\t%d\t\t%d", vCarro[i].id, vCarro[i].pot, vCarro[i].avaria);
+            printf("\n\t%d\t%d\t\t%d", vCarro[i].idC, vCarro[i].pot, vCarro[i].avaria);
         }
         printf("\n#--------------------------------------------#");
     }else{
@@ -263,7 +263,7 @@ void mostraVetores(pCarro vCarro, int *tam_Carros, pPiloto vPiloto, int *tam_Pil
         printf("\n#---------------------------------------------------------------------------------------------------------#");
         printf("\n\tID\tNome\t\t\tData de nascimento\tPeso\tImpedimento\tExperiencia\n");
         for(i = 0; i < (*tam_Pilotos); i++){
-            printf("\n\t%d\t%-25s%d/%d/%d\t\t%d Kg\t%d\t\t%.2f", vPiloto[i].id, vPiloto[i].nome,vPiloto[i].data_nasc.dia, vPiloto[i].data_nasc.mes, vPiloto[i].data_nasc.ano, vPiloto[i].peso, vPiloto[i].impedimento, vPiloto[i].exp);
+            printf("\n\t%d\t%-25s%d/%d/%d\t\t%d Kg\t%d\t\t%.2f", vPiloto[i].idP, vPiloto[i].nome,vPiloto[i].data_nasc.dia, vPiloto[i].data_nasc.mes, vPiloto[i].data_nasc.ano, vPiloto[i].peso, vPiloto[i].impedimento, vPiloto[i].exp);
         }
         printf("\n#---------------------------------------------------------------------------------------------------------#");
     }
@@ -293,7 +293,7 @@ void grava_fich_pilotos(char *nomefich, pPiloto vPilotos, int tam){
         return;
     }
     for(i = 0; i < (tam); i++){                                                 //ciclo que escreve o vetor dos pilotos todos no ficheiro
-       if(fprintf(fp, "%s\n%d %d %d %d %d %.2f %d\n\n", vPilotos[i].nome, vPilotos[i].id, vPilotos[i].data_nasc.dia, vPilotos[i].data_nasc.mes, vPilotos[i].data_nasc.ano,vPilotos[i].peso,vPilotos[i].exp,vPilotos[i].impedimento) < 0){
+       if(fprintf(fp, "%s\n%d %d %d %d %d %.2f %d\n\n", vPilotos[i].nome, vPilotos[i].idP, vPilotos[i].data_nasc.dia, vPilotos[i].data_nasc.mes, vPilotos[i].data_nasc.ano,vPilotos[i].peso,vPilotos[i].exp,vPilotos[i].impedimento) < 0){
            printf("\n[ERRO] Escrita no ficheiro %s falhada!\n",nomefich);
            fclose(fp);
        }
@@ -312,7 +312,7 @@ void grava_fich_carros(char *nomefich, pCarro vCarros, int tam){
         return;
     }
     for(i = 0; i < (tam); i++){                                                 //ciclo que escreve o vetor dos carros todos no ficheiro
-       if(fprintf(fc, "%d %d %d\n\n", vCarros[i].id, vCarros[i].pot, vCarros[i].avaria) < 0){
+       if(fprintf(fc, "%d %d %d\n\n", vCarros[i].idC, vCarros[i].pot, vCarros[i].avaria) < 0){
            printf("\n[ERRO] Escrita no ficheiro %s falhada!\n",nomefich);
            fclose(fc);
        }
@@ -355,10 +355,12 @@ int terminaProg(char *fichpilotos, char *fichcarros, pPiloto vpilotos, int *tam_
 //funcao principal, onde comeca o programa e e' apresentado o menu principal
 int main(int argc, char** argv) {
     
+
 /*
     testes();
     exit(0);
 */
+
     
     int op, tam_pilotos = 0, tam_carros = 0;
     pPiloto vPilotos = NULL;

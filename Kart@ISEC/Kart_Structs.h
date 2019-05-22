@@ -28,7 +28,7 @@ extern "C" {
     
     typedef struct Pilotos{
         char nome[ST_TAM];
-        int id;
+        int idP;
         data data_nasc;
         int peso;
         float exp;
@@ -36,16 +36,23 @@ extern "C" {
     }piloto, *pPiloto;
     
     typedef struct Carros{
-        int id;
+        int idC;
         int pot;
         int avaria;
     }carro, *pCarro;
     
-    typedef struct Treinos treino, *pTreino;
-    struct Treinos{
+    typedef struct Emparelhamento{
+        int id_par;
+        piloto motorista;
+        carro kart;
+    }empar, *pEmpar;
+    
+    typedef struct Corridas treino, *pTreino;
+    struct Corridas{
         int n_voltas;
         int comprimento;
         int capacidade;
+        pEmpar pares;
         pTreino prox;
     };
 
