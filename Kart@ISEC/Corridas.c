@@ -8,6 +8,56 @@
 #include "Corridas.h"
 
 
+//funcao que mostra todos os pilotos e carros não selecionados
+void mostra_nao_selecionados(treino t, pPiloto vp, int np, pCarro vc, int nc, int c_disp, int p_disp){
+    system("cls");
+    printf("#--------------------------------------------------#");
+    printf("\n      Pilotos nao selecionados para a corrida:");
+    printf("\n#--------------------------------------------------#\n");
+    int select;
+    for(int i=0; i<np; i++){
+        select = 0;
+        for(int j=0; j < t.capacidade; j++){
+            if(t.pares[j].motorista.idP == vp[i].idP){
+                select = 1;
+            }
+        }
+        if(select == 0){
+            if(vp[i].impedimento != 0){
+                printf("\nPiloto (ID = %d): %-20s | Razao: Nao pode correr durante %d partidas!!", vp[i].idP, vp[i].nome, vp[i].impedimento);
+            }else if(p_disp > c_disp && c_disp < t.capacidade){
+                printf("\nPiloto (ID = %d): %-20s | Razao: Nao existe mais nenhum carro disponivel para a corrida!!", vp[i].idP, vp[i].nome);
+            }else{
+                printf("\nPiloto (ID = %d): %-20s | Razao: Nao foi selecionado (na escolha aleatoria) para a corrida!!", vp[i].idP, vp[i].nome);
+            }
+        }
+    }
+    printf("\n\n#--------------------------------------------------#");
+    printf("\n      Carros nao selecionados para a corrida:");
+    printf("\n#--------------------------------------------------#\n");
+    for(int i=0; i<nc; i++){
+        select = 0;
+        for(int j=0; j < t.capacidade; j++){
+            if(t.pares[j].kart.idC == vc[i].idC){
+                select = 1;
+            }
+        }
+        if(select == 0){
+            if(vc[i].avaria != 0){
+                printf("\nCarro (ID = %d) | Razao: Nao pode correr durante %d partidas devido a avarias!!", vc[i].idC, vc[i].avaria);
+            }else if(c_disp > p_disp && p_disp < t.capacidade){
+                printf("\nCarro (ID = %d) | Razao: Nao existe mais nenhum piloto disponivel para a corrida!!", vc[i].idC);
+            }else{
+                printf("\nCarro (ID = %d) | Razao: Nao foi selecionado (na escolha aleatoria) para a corrida!!", vc[i].idC);
+            }
+        }
+    }
+    printf("\n\n#--------------------------------------------------#");
+    printf("\n\nPressione ENTER para continuar...");
+    fflush(stdin);
+    getchar();
+}
+
 //funcao que verifica os carros disponiveis
 int verifica_carros_disponiveis(pCarro vcarros, int n_carros){
     int carros_disp = 0;
@@ -102,15 +152,19 @@ void emparelhamento_pre_corrida(treino *t, pPiloto vpilotos,  int n_pilotos, pCa
     
     t->pares = vPares;
     
+    //Mostragem de todos os emparelhamentos criados
+    printf("\n#---------------------------------------------------------#");
     printf("\n      Pares (aleatorios) selecionados para a corrida:");
-    printf("\n#---------------------------------------------------------#");
+    printf("\n#---------------------------------------------------------#\n");
     for(int i=0; i<t->capacidade; i++){
-        printf("\nPar: %d | Piloto(%d): %s | Kart: %d", t->pares[i].id_par, t->pares[i].motorista.idP, t->pares[i].motorista.nome, t->pares[i].kart.idC);
+        printf("\nPar (ID): %d | Piloto(%d): %s | Kart: %d", t->pares[i].id_par, t->pares[i].motorista.idP, t->pares[i].motorista.nome, t->pares[i].kart.idC);
     }
-    printf("\n#---------------------------------------------------------#");
+    printf("\n\n#---------------------------------------------------------#");
     printf("\n\nPressione ENTER para continuar...");
     fflush(stdin);
     getchar();
+    
+    mostra_nao_selecionados(*t, vpilotos,  n_pilotos, vcarros, n_carros, c_disp, p_disp);
 }
 
 //funcao onde e exigida uma configuracao inicial para cada corrida
@@ -124,7 +178,9 @@ pTreino configuracao_corrida_treino(pTreino corrida, pPiloto vp, int *t_p, pCarr
         printf("[Erro] Alocacao de memoria...\n");
         return corrida;
     }
-    printf("\n      Configuracoes da corrida de treino:\n");
+    printf("#---------------------------------------------#");
+    printf("\n    Configuracoes da corrida de treino:");
+    printf("\n#---------------------------------------------#\n");
     do{
         printf("\nNumero de voltas: ");
         scanf("%d", &t.n_voltas);
@@ -133,14 +189,14 @@ pTreino configuracao_corrida_treino(pTreino corrida, pPiloto vp, int *t_p, pCarr
         }
     }while(t.n_voltas < 5 || t.n_voltas > 10);
     do{
-        printf("\nComprimento da pista (m): ");
+        printf("Comprimento da pista (m): ");
         scanf("%d", &t.comprimento);
         if(t.comprimento < 500 || t.comprimento > 1000){
             printf("\n[ERRO] Comprimento da pista invalido! Tem de ser entre 500 e 1000 metros...");
         }
     }while(t.comprimento < 500 || t.comprimento > 1000);
     do{
-        printf("\nNumero maximo de carros: ");
+        printf("Numero maximo de carros: ");
         scanf("%d", &t.capacidade);
         if(t.capacidade <= 0){
             printf("\n[ERRO] Capacidade da pista invalida! Tem de ser superior a 0 carros...");
