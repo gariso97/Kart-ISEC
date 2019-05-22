@@ -227,6 +227,53 @@ pTreino configuracao_corrida(pTreino corrida, pPiloto vp, int *t_p, pCarro vc, i
     return corrida;
 }
 
+//funcao que organiza os pares pela pontuacao
+pTreino organiza_pela_pontuacao(pTreino vetor, int n_pares){
+    int j;
+    empar temp;
+    
+    for(j = 0; j<n_pares-1; j++)
+    for(int i = 0; i < n_pares-j-1; i++){
+        if(vetor->pares[i].tempo > vetor->pares[i+1].tempo){
+            temp = vetor->pares[i];
+            vetor->pares[i] = vetor->pares[i+1];
+            vetor->pares[i+1] = temp;
+        }
+    }
+    return vetor;
+}
+
+//funcao que mostra a classificacao de cada volta e do final
+void mostra_classificacao_volta( pTreino corrida, int n){
+    char str[ST_TAM];
+/*
+    if(n == volta->n_voltas){
+        printf("\n\n#---------------------------------------------#");
+        printf("\n          Classificacao final da corrida:");
+        printf("\n#---------------------------------------------#\n");
+        
+    }else{
+*/
+        printf("\n\n#---------------------------------------------#");
+        printf("\n           Classificacao da volta %d:", n);
+        printf("\n#---------------------------------------------#\n");
+        
+        while(corrida != NULL){
+            sprintf();
+            
+            sprintf();
+            for(int j = 0; j < corrida->max_pares; j++){
+                printf("\n-> %d <- %-20s (ID: %d) | Kart: %d - %s", j+1, corrida->pares[j].motorista.nome, corrida->pares[j].motorista.idP, corrida->pares[j].kart.idC, str);
+            }
+
+            if(n % 2 == 0){
+                espera(5);
+            }
+            corrida = corrida->prox;
+        }
+    //}
+}
+
 //funcao onde e executada uma corrida
 pTreino corrida_ativa(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c){
     pTreino nova, aux;
@@ -239,7 +286,7 @@ pTreino corrida_ativa(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcar
         return corrida;
     }
     
-    for(int i = 0; i < corrida->n_voltas; i++){
+    for(int i = 1; i <= corrida->n_voltas; i++){
         nova->capacidade = corrida->capacidade;
         nova->comprimento = corrida->comprimento;
         nova->max_pares = corrida->max_pares;
@@ -247,23 +294,18 @@ pTreino corrida_ativa(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcar
         nova->prox = NULL;
         nova->pares = corrida->pares;
         
-        printf("\n\n#---------------------------------------------#");
-        printf("\n           Classificacao da volta %d:", i);
-        printf("\n#---------------------------------------------#\n");
-        
         for(int j = 0; j < corrida->max_pares; j++){
             idade = calcula_idade(corrida->pares[j].motorista.data_nasc.dia, corrida->pares[j].motorista.data_nasc.mes, corrida->pares[j].motorista.data_nasc.ano);
             nova->pares[j].tempo = calculaSegundos(idade, corrida->pares[j].motorista.peso, corrida->pares[j].motorista.exp, corrida->pares[j].kart.pot, corrida->comprimento);
-            printf("\n-> %d <- %s (ID: %d) | Kart: %d - %d segundos", j, corrida->pares[j].motorista.nome, corrida->pares[j].motorista.idP, corrida->pares[j].kart.idC, nova->pares[j].tempo);
         }
+        nova = organiza_pela_pontuacao(nova, nova->max_pares);
+        
         aux = corrida;
         while(aux->prox != NULL){
             aux = aux->prox;
         }
         aux->prox = nova;
-        if(i % 2 == 0){
-            espera(5);
-        }
+        mostra_classificacao_volta(aux, i);
     }
     return corrida;
 }
