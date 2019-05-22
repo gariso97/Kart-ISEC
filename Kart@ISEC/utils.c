@@ -1,8 +1,6 @@
 // Trabalho Pratico Programacao - LEI
 // DEIS-ISEC 2018-2019
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 #include <limits.h>
 

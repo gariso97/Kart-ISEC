@@ -13,7 +13,6 @@
 #include <string.h>
 
 #define ST_TAM 105
-
 //#define deb
 
 #ifdef __cplusplus
@@ -43,15 +42,17 @@ extern "C" {
     
     typedef struct Emparelhamento{
         int id_par;
+        int tempo;
         piloto motorista;
         carro kart;
     }empar, *pEmpar;
-    
+        
     typedef struct Corridas treino, *pTreino;
     struct Corridas{
         int n_voltas;
         int comprimento;
         int capacidade;
+        int max_pares;
         pEmpar pares;
         pTreino prox;
     };
