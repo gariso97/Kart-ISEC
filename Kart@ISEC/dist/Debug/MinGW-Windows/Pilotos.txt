@@ -5,8 +5,20 @@ Faisca
 3 1 1 1980 50 9.50 1
 
 Diana Alves Pombo
-4 29 2 2016 55 4.50 0
+4 28 2 1985 55 4.50 0
 
 Ana Luisa Freitas
 7 29 2 1976 68 1.00 3
+
+Bruno Rodrigues
+8 23 7 1997 87 0.00 0
+
+Kevin Carvalho
+9 30 5 1988 70 0.00 2
+
+Rita Fonseca
+10 5 11 1994 76 0.00 0
+
+Goncalo Pereira
+1 13 5 1991 90 1.50 0
 

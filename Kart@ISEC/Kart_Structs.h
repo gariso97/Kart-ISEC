@@ -40,23 +40,40 @@ extern "C" {
         int avaria;
     }carro, *pCarro;
     
-    typedef struct Emparelhamento{
+    typedef struct Emparelhamento{      //vetor de estruturas onde max_pares e o tamanho do vetor
         int id_par;
-        int tempo;
+        int melhor_tempo_final;
+        int tempo_volta;
+        int abandono;
         piloto motorista;
         carro kart;
     }empar, *pEmpar;
-        
+    
     typedef struct Corridas treino, *pTreino;
-    struct Corridas{
+    struct Corridas{                    //lista ligada
         int n_voltas;
         int comprimento;
         int capacidade;
         int max_pares;
-        pEmpar pares;
+        pEmpar classif;                 //vetor de estruturas onde max_pares e o tamanho do vetor
         pTreino prox;
     };
-
+    
+    typedef struct Classificacao_campeonato class_c, *pClass_c;
+    struct Classificacao_campeonato{    //lista ligada com n_voltas estruturas
+        int pontuacao;
+        piloto jogador;
+        int abandono;
+        pClass_c prox;
+    };
+    
+    typedef struct Campeonato camp, *pCamp;
+    struct Campeonato{                  //vetor de estruturas onde corridas_total e o tamanho do vetor
+        int corridas_total;
+        pClass_c classif;
+        pTreino partidas;
+    };
+    
 #ifdef __cplusplus
 }
 #endif
