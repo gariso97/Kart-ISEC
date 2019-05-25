@@ -277,6 +277,8 @@ pCarro vetor_carros(char *nomefich, int *tam){
             free(vCarro);
             return vCarro;
         }
+        
+        ///
         for(int j = 0; j < i; j++){
             if(novo.idC == vCarro[j].idC){
                 printf("\n[Erro] Parametros do ficheiro %s incorretos! (ID %d repetido)\n",nomefich, novo.idC);
@@ -448,7 +450,7 @@ int main(int argc, char** argv) {
     do {
         system("cls");
         logotipo();
-        printf("               Menu Principal:\n");
+        printf("\n               Menu Principal:\n");
         printf("#-------------------------------------------#\n");
         printf("\n           1 - Lista de Pilotos");
         printf("\n           2 - Lista de Carros");
@@ -468,7 +470,7 @@ int main(int argc, char** argv) {
                 mostraVetores(vCarros, &tam_carros, NULL, NULL, 0);
                 break;
             case 3:
-                corrida_campeonato = corrida_individual(corrida_campeonato, vPilotos, &tam_pilotos, vCarros, &tam_carros);
+                corrida_campeonato = realizar_corrida(corrida_campeonato, vPilotos, &tam_pilotos, vCarros, &tam_carros);
                 break;
             case 4:
                 //campeonato();

@@ -16,7 +16,7 @@
 extern "C" {
 #endif
     int calcula_idade(int P_dia, int P_mes, int P_ano);
-    pTreino corrida_individual(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c);
+    pTreino realizar_corrida(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c);
     
 #ifdef __cplusplus
 }

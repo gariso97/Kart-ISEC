@@ -261,27 +261,21 @@ void procurar_tempo_volta( pTreino corrida, int volta, int id){
 void mostra_classificacao_volta( pTreino corrida, int n){
     
     if(n > corrida->n_voltas){
+        pTreino c = corrida;
+        
         printf("\n\n#---------------------------------------------#");
         printf("\n  ==$|| Classificacao final da corrida: ||$==");
         printf("\n#---------------------------------------------#\n");
-        int i=0;
-        while(corrida != NULL){
-            for(int j = 0; j < corrida->max_pares; j++){
-                if(j == 0){
-                    printf("volta %d: %d seg.\n", i, corrida->classif[0].tempo_volta);
-                    i++;
-                }
-                corrida->classif[j].melhor_tempo_final = corrida->classif[j].tempo_volta + corrida->classif[j].melhor_tempo_final;
-            }
-            if(corrida->prox == NULL){
+        while(c != NULL){
+            if(c->prox == NULL){
                 break;
             }
-            corrida = corrida->prox;
+            c = c->prox;
         }
-        corrida = organiza_pela_pontuacao(corrida, 1);
+        c = organiza_pela_pontuacao(c, 1);
         
-        for(int j = 0; j < corrida->max_pares; j++){
-            printf("\n-> %d <- %-20s (ID: %d) | Kart: %d - %d segundos", j+1, corrida->classif[j].motorista.nome, corrida->classif[j].motorista.idP, corrida->classif[j].kart.idC, corrida->classif[j].melhor_tempo_final);
+        for(int j = 0; j < c->max_pares; j++){
+            printf("\n-> %d <- %-20s (ID: %d) | Kart: %d - %d segundos", j+1, c->classif[j].motorista.nome, c->classif[j].motorista.idP, c->classif[j].kart.idC, c->classif[j].melhor_tempo_final);
         }
     }else{
         printf("\n\n#---------------------------------------------#");
@@ -299,9 +293,51 @@ void mostra_classificacao_volta( pTreino corrida, int n){
     }
 }
 
+//funcao que preenche uma estrutura da lista
+void preenche_volta( pTreino n, pTreino c){
+    pEmpar vetor = NULL;
+    pTreino temp = c;
+    
+    while(temp->prox != NULL)
+        temp = temp->prox;
+    
+    vetor = malloc(sizeof(empar) * (temp->max_pares));
+    n->capacidade = temp->capacidade;
+    n->comprimento = temp->comprimento;
+    n->max_pares = temp->max_pares;
+    n->n_voltas = temp->n_voltas;
+    n->prox = NULL;
+    for(int i = 0; i < temp->max_pares; i++){
+        vetor[i].abandono = temp->classif[i].abandono;
+        vetor[i].id_par = temp->classif[i].id_par;
+        vetor[i].kart = temp->classif[i].kart;
+        vetor[i].melhor_tempo_final = temp->classif[i].melhor_tempo_final;
+        vetor[i].motorista = temp->classif[i].motorista;
+        vetor[i].tempo_volta = temp->classif[i].tempo_volta;
+    }
+    n->classif = vetor;
+}
+
+//funcao para efeitos de debugging... mostra a lista da corrida
+void mostra_lista(pTreino corr){
+    int i=0;
+    pTreino mostra = corr;
+    while(mostra != NULL){
+        printf("\nVolta: %d -> Voltas: %d | Comp: %d | Capacidade: %d | N_Pares: %d\n", i, mostra->n_voltas, mostra->comprimento, mostra->capacidade, mostra->max_pares);
+        i++;
+        for(int i=0; i < mostra->max_pares; i++){
+            printf("-> %d <- %-20s (ID: %d) | Kart: %d - %d segundos\n", i+1, mostra->classif[i].motorista.nome, mostra->classif[i].motorista.idP, mostra->classif[i].kart.idC, mostra->classif[i].tempo_volta);
+        }
+        mostra = mostra->prox;
+    }
+    printf("\n\n       Pressione ENTER para continuar...");
+    fflush(stdin);
+    getchar();
+}
+
 //funcao onde e executada uma corrida
 pTreino corrida_ativa(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c, int volta){
-    pTreino nova, aux;
+    pTreino nova = NULL, aux = NULL;
     int idade;
     
     nova = malloc(sizeof(treino));
@@ -309,36 +345,36 @@ pTreino corrida_ativa(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcar
         printf("[Erro] Alocacao de memoria...\n");
         return corrida;
     }
+    preenche_volta(nova, corrida);
     
-    
-    nova->capacidade = corrida->capacidade;
-    nova->comprimento = corrida->comprimento;
-    nova->max_pares = corrida->max_pares;
-    nova->n_voltas = corrida->n_voltas;
-    nova->prox = NULL;
-    nova->classif = corrida->classif;
-
-    for(int j = 0; j < corrida->max_pares; j++){
-        if(corrida->classif[j].abandono == 1){
+    for(int j = 0; j < nova->max_pares; j++){
+        if(nova->classif[j].abandono == 1){
             nova->classif[j].tempo_volta = 0;
         }else{
-            idade = calcula_idade(corrida->classif[j].motorista.data_nasc.dia, corrida->classif[j].motorista.data_nasc.mes, corrida->classif[j].motorista.data_nasc.ano);
-            nova->classif[j].tempo_volta = calculaSegundos(idade, corrida->classif[j].motorista.peso, corrida->classif[j].motorista.exp, corrida->classif[j].kart.pot, corrida->comprimento);
+            idade = calcula_idade(nova->classif[j].motorista.data_nasc.dia, nova->classif[j].motorista.data_nasc.mes, nova->classif[j].motorista.data_nasc.ano);
+            nova->classif[j].tempo_volta = calculaSegundos(idade, nova->classif[j].motorista.peso, nova->classif[j].motorista.exp, nova->classif[j].kart.pot, nova->comprimento);
             //nova->classif[j].abandono = probEvento(0.05);
         }
+        nova->classif[j].melhor_tempo_final = nova->classif[j].tempo_volta + nova->classif[j].melhor_tempo_final;
     }
-
+#ifdef deb
+    mostra_lista(nova);
+#endif
+    
     aux = corrida;
     while(aux->prox != NULL){
         aux = aux->prox;
     }
     aux->prox = nova;
+
     if(volta <= corrida->n_voltas){
         mostra_classificacao_volta(aux->prox, volta);
     }
+
     return corrida;
 }
 
+//funcao que liberta a lista da corrida se for treino
 void liberta_lista_corrida(pTreino c) {
     pTreino aux;
     while (c != NULL) {
@@ -349,16 +385,24 @@ void liberta_lista_corrida(pTreino c) {
 }
 
 //funcao onde e chamada a configuracao e executada uma corrida individual (treino)
-pTreino corrida_individual(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c){
+pTreino realizar_corrida(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c){
     pTreino corrida_treino = NULL;
     
     corrida_treino = configuracao_corrida(corrida_treino, vpilotos, tam_p, vcarros, tam_c);
+#ifdef deb
+    mostra_lista(corrida_treino);
+#endif
+    
     system("cls");
     for(int i = 1; i <= corrida_treino->n_voltas; i++){
         corrida_treino = corrida_ativa(corrida_treino, vpilotos, tam_p, vcarros, tam_c, i);
+#ifdef deb
+        mostra_lista(corrida_treino);       //mostra tudo o q existe na lista ligada
+#endif
         if(i == corrida_treino->n_voltas){
             mostra_classificacao_volta(corrida_treino, i+1);
         }
+
     }
     liberta_lista_corrida(corrida_treino);
     
