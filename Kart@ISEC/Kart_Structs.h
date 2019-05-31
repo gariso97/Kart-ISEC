@@ -63,16 +63,14 @@ extern "C" {
     struct Classificacao_campeonato{    //lista ligada com n_voltas estruturas
         int pontuacao;
         piloto jogador;
-        int abandono;
         pClass_c prox;
     };
     
-    typedef struct Campeonato camp, *pCamp;
-    struct Campeonato{                  //vetor de estruturas onde corridas_total e o tamanho do vetor
+    typedef struct Campeonato{          //estrutura que armazena a lista ligada da classificacao e o numero de corridas que ainda faltam para terminar
         int corridas_total;
         pClass_c classif;
-        pTreino partidas;
-    };
+        //pTreino partidas;
+    }Camp, *pCamp;
     
 #ifdef __cplusplus
 }

@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>Campeonato.h</itemPath>
       <itemPath>Corridas.h</itemPath>
       <itemPath>Kart_Structs.h</itemPath>
       <itemPath>utils.h</itemPath>
@@ -15,6 +16,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>Campeonato.c</itemPath>
       <itemPath>Corridas.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>utils.c</itemPath>
@@ -41,6 +43,10 @@
       </toolsSet>
       <compileType>
       </compileType>
+      <item path="Campeonato.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="Campeonato.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Corridas.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="Corridas.h" ex="false" tool="3" flavor2="0">
@@ -74,6 +80,10 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="Campeonato.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="Campeonato.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Corridas.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="Corridas.h" ex="false" tool="3" flavor2="0">

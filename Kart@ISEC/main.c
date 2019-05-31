@@ -8,68 +8,19 @@
 #include "Corridas.h"
 
 
-//funcao que calcula a idade do piloto ////////////----------------> Nao implementada (IMPORTANTE)
+//funcao que calcula a idade do piloto
 int calcula_idade(int P_dia, int P_mes, int P_ano){
-    int dia, mes, ano, hora, minuto, seg;
+    int i = 0, dia, mes, ano, hora, minuto, seg;
     
     obtemData(&dia, &mes, &ano, &hora, &minuto, &seg);
-    return (ano - P_ano);
-    /*
-    int DaysInMon[] = {31, 28, 31, 30, 31, 30,
-                       31, 31, 30, 31, 30, 31};
-    int days, month, year;
-    char dob[100];
-    time_t ts;
-    struct tm *ct;
- 
-    /* enter date of birth
-    printf("Enter your date of birth (DD/MM/YYYY): ");
-    scanf("%d/%d/%d",&days,&month, &year);
- 
-    /*get current date.
-    ts = time(NULL);
-    ct = localtime(&ts);
- 
-    printf("Current Date: %d/%d/%d\n",
-            ct->tm_mday, ct->tm_mon + 1, ct->tm_year + 1900);
- 
-    days = DaysInMon[month - 1] - days + 1;
- 
-    /* leap year checking
-    if (isLeapYear(year, month)) 
-    {
-            days = days + 1;
-    }
- 
-    /* calculating age in no of days, years and months
-    days = days + ct->tm_mday;
-    month = (12 - month) + (ct->tm_mon);
-    year = (ct->tm_year + 1900) - year - 1;
- 
-    /* checking for leap year feb - 29 days
-    if (isLeapYear((ct->tm_year + 1900), (ct->tm_mon + 1))) 
-    {
-            if (days >= (DaysInMon[ct->tm_mon] + 1)) 
-            {
-                    days = days - (DaysInMon[ct->tm_mon] + 1);
-                    month = month + 1;
-            }
-    } 
-    else if (days >= DaysInMon[ct->tm_mon]) 
-    {
-            days = days - (DaysInMon[ct->tm_mon]);
-            month = month + 1;
-    }
- 
-    if (month >= 12) 
-    {
-            year = year + 1;
-            month = month - 12;
-    }
- 
-    /* print age
-    printf("\n## Hey you are  %d years %d months and %d days old. ##\n", year, month, days);
-    */
+    if (mes <= P_mes)
+        if (dia <= P_dia)
+            i = ano - P_ano - 1;
+        else
+            i = ano - P_ano - 1;
+    else
+        i = ano - P_ano;
+    return i;
 }
 
 //funcao que valida uma determinada data
@@ -386,6 +337,36 @@ void grava_fich_carros(char *nomefich, pCarro vCarros, int tam){
     fclose(fc);
 }
 
+//funcao que marca o inicio do campeonato
+int certeza_campeonato(){
+    int op;
+    system("cls");
+    printf("\n#---------------------------------------------#");
+    printf("\n           =$|| Modo campeonato ||$=");
+    printf("\n#---------------------------------------------#\n");
+    printf("\nNao podera efetuar corridas de treino!!\n"
+            "Tem de acabar OBRIGATORIAMENTE toda a temporada!!\n"
+            "Tem a certeza que deseja comecar o MODO CAMPEONATO?\n\n"
+            "Opcao (Sim - 1 | Nao - 2): ");
+    do {
+        scanf("%d", &op);
+        if (op == 2) {
+            return 0;
+        }else if(op == 1){
+            do{
+                printf("Numero total de corridas no campeonato [3-8]: ");
+                scanf("%d", &op);
+                if(op < 3 || op > 8){
+                    printf("[ERRO] O numero de corridas no campeonato deve ser entre 3 e 8...\n");
+                }
+            }while(op < 3 || op > 8);
+            return op;
+        }else{
+            printf("[ERRO] Opcao incorreta...\n");
+        }
+    }while(1);
+}
+
 //funcao que da a escolher ao utilizador se pretende terminar o programa ou nao
 int terminaProg(char *fichpilotos, char *fichcarros, pPiloto vpilotos, int *tam_pilotos, pCarro vcarros, int *tam_carros) {
 
@@ -424,10 +405,11 @@ int main(int argc, char** argv) {
     testes();
     exit(0);
 */
-    int op, tam_pilotos = 0, tam_carros = 0;
+    int op, partidas, camp = 0, tam_pilotos = 0, tam_carros = 0;
     pPiloto vPilotos = NULL;
     pCarro vCarros = NULL;
-    pTreino corrida_campeonato = NULL;
+    pTreino corrida = NULL;
+    pCamp campeonato = NULL;
     char *pilotosTxt = "Pilotos.txt";
     char *carrosTxt = "Carros.txt";
     
@@ -454,7 +436,11 @@ int main(int argc, char** argv) {
         printf("#-------------------------------------------#\n");
         printf("\n           1 - Lista de Pilotos");
         printf("\n           2 - Lista de Carros");
-        printf("\n           3 - Corrida de Treino");
+        if(camp != 1){
+            printf("\n           3 - Modo Individual");
+        }else{
+            printf("\n           3 - Modo Individual (NA)");
+        }
         printf("\n           4 - Modo Campeonato");
         printf("\n           5 - Sair");
 
@@ -470,10 +456,19 @@ int main(int argc, char** argv) {
                 mostraVetores(vCarros, &tam_carros, NULL, NULL, 0);
                 break;
             case 3:
-                corrida_campeonato = realizar_corrida(corrida_campeonato, vPilotos, &tam_pilotos, vCarros, &tam_carros);
+                if(camp != 1)
+                    corrida = realizar_corrida(corrida, vPilotos, &tam_pilotos, vCarros, &tam_carros);
                 break;
             case 4:
-                //campeonato();
+                if(camp != 1){
+                    campeonato->corridas_total = certeza_campeonato();
+                    if(campeonato->corridas_total != 0)
+                        camp = 1;
+                }else{
+                    //campeonato = campeonato(campeonato, vPilotos, &tam_pilotos, vCarros, &tam_carros);
+                    if(campeonato->corridas_total <= 1)
+                        camp = 0;
+                }
                 break;
             case 5:
                 terminaProg(pilotosTxt, carrosTxt, vPilotos, &tam_pilotos, vCarros, &tam_carros);
