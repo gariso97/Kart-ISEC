@@ -25,7 +25,7 @@ extern "C" {
     void modifica_exp(pTreino corrida, pPiloto vp, int *t_p);
     void penalizacao(pTreino corrida, pPiloto vp, int *t_p);
     void mostra_classificacao_final(pTreino corrida);
-    void liberta_lista_corrida(pTreino c);
+    pTreino liberta_lista_corrida(pTreino c);
     pTreino realizar_corrida(pTreino corrida_treino, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c);
     
 #ifdef __cplusplus

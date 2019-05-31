@@ -405,7 +405,7 @@ int main(int argc, char** argv) {
     testes();
     exit(0);
 */
-    int op, partidas, camp = 0, tam_pilotos = 0, tam_carros = 0;
+    int op, camp = 0, tam_pilotos = 0, tam_carros = 0;
     pPiloto vPilotos = NULL;
     pCarro vCarros = NULL;
     pTreino corrida = NULL;
