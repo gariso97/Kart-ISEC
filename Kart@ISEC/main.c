@@ -406,12 +406,15 @@ int main(int argc, char** argv) {
     exit(0);
 */
     int op, camp = 0, tam_pilotos = 0, tam_carros = 0;
-    pPiloto vPilotos = NULL;
-    pCarro vCarros = NULL;
-    pTreino corrida = NULL;
-    pCamp campeonato = NULL;
+    pPiloto vPilotos = NULL;                            //vetor de estruturas
+    pCarro vCarros = NULL;                              //vetor de estruturas
+    pTreino corrida = NULL;                             //lista ligada de estruturas
+    Camp campeonato;                                    //estrutura normal
+    campeonato.ultima_partida = NULL;                   //lista ligada de estruturas
+    campeonato.classif = NULL;                          //lista ligada de estruturas
     char *pilotosTxt = "Pilotos.txt";
     char *carrosTxt = "Carros.txt";
+    char *campeonatoBin = "Campeonato.bin";
     
     logotipo();
     printf("\n\n       Pressione ENTER para continuar...");
@@ -419,9 +422,11 @@ int main(int argc, char** argv) {
     getchar();
     
     initRandom();
-    //Carregar pilotos e carros dos ficheiros txt
+    
+    //Carregar pilotos e carros dos ficheiros txt e o campeonato de um ficheiro binario
     vPilotos = vetor_pilotos(pilotosTxt, &tam_pilotos);
     vCarros = vetor_carros(carrosTxt, &tam_carros);
+    campeonato = carrega_campeonato(campeonatoBin);
     
 #ifdef deb
     printf("\n\nPressione ENTER para continuar...");
@@ -461,12 +466,12 @@ int main(int argc, char** argv) {
                 break;
             case 4:
                 if(camp != 1){
-                    campeonato->corridas_total = certeza_campeonato();
-                    if(campeonato->corridas_total != 0)
+                    campeonato.corridas_total = certeza_campeonato();
+                    if(campeonato.corridas_total != 0)
                         camp = 1;
                 }else{
-                    //campeonato = campeonato(campeonato, vPilotos, &tam_pilotos, vCarros, &tam_carros);
-                    if(campeonato->corridas_total <= 1)
+                    campeonato = campeonato_corridas(campeonato, vPilotos, &tam_pilotos, vCarros, &tam_carros);
+                    if(campeonato.corridas_total <= 1)
                         camp = 0;
                 }
                 break;

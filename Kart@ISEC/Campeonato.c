@@ -117,37 +117,63 @@ void mostra_classificacao_campeonato(Camp c){
 }
 */
 
+//funcao que carrega do ficheiro binario o campeonato para a lista ligada
+Camp carrega_campeonato(char *campeonatoBin){
+    
+}
+
+//funcao que grava a lista ligada do campeonato no ficheiro binario
+void grava_fich_campeonato(Camp campeonato){
+    
+}
+
 //funcao onde e chamada a configuracao e executada uma corrida para o campeonato
-pCamp campeonato(pCamp camp, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c) {
+Camp campeonato_corridas(Camp camp, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c) {
     pTreino corrida_treino = NULL;
     
     int op;
+    system("cls");
     do {
-        system("cls");
         printf("\n#---------------------------------------------#");
         printf("\n           =$|| Menu Campeonato ||$=");
         printf("\n#---------------------------------------------#\n");
-        printf("\n           1 - Partida (Prova -> %d)", camp->corridas_total);
-        printf("\n           2 - Classificacao Geral");
-        printf("\n           3 - Voltar");
+        printf("\n           1 - Partida (Prova -> %d)", camp.corridas_total);
+        printf("\n           2 - Classif. da Ultima Corrida");
+        printf("\n           3 - Classificacao Geral");
+        printf("\n           4 - Voltar");
 
         printf("\n\nOpcao: ");
         scanf("%d", &op);
-        if (op == 2) {
-            //mostra_classificacao_campeonato(camp);
-        } else if (op == 3) {
-            //return camp;
-        } else if (op == 1) {
-            break;
+        switch(op){
+            case 2:
+                system("cls");
+                mostra_classificacao_final(camp.ultima_partida);
+                break;
+            case 3:
+                system("cls");
+                //mostra_classificacao_campeonato(camp);
+                break;
+            case 4:
+                return camp;
         }
-    } while (op < 1 || op > 3);
+    } while (op != 1);
 
+    liberta_lista_corrida(camp.ultima_partida);
     corrida_treino = configuracao_corrida(corrida_treino, vpilotos, tam_p, vcarros, tam_c);
     reduz_falhas(vpilotos, tam_p, vcarros, tam_c);
     
     system("cls");
     for (int i = 1; i <= corrida_treino->n_voltas; i++) {
         corrida_treino = corrida_ativa(corrida_treino, vpilotos, tam_p, vcarros, tam_c, i);
+#ifdef deb
+        mostra_lista(corrida_treino); //mostra tudo o q existe na lista ligada
+#endif
+        if (i <= corrida_treino->n_voltas) {
+            mostra_classificacao_volta(corrida_treino, i);
+            if (i % 2 == 0) {
+                espera(5);
+            }
+        }
         if (i == corrida_treino->n_voltas) {
             mostra_classificacao_volta(corrida_treino, i + 1);
         }
@@ -163,10 +189,8 @@ pCamp campeonato(pCamp camp, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *
     getchar();
     system("cls");
     penalizacao(corrida_treino, vpilotos, tam_p);
-/*
-    mostra_classificacao_final(corrida_treino);
-*/
-    camp->corridas_total--;
-    liberta_lista_corrida(corrida_treino);
-    //return camp;
+    pTreino corrida = corrida_treino;
+    camp.ultima_partida = corrida;
+    camp.corridas_total--;
+    return camp;
 }

@@ -231,13 +231,10 @@ pTreino configuracao_corrida(pTreino corrida, pPiloto vp, int *t_p, pCarro vc, i
     nova->classif = t.classif;
     nova->prox = NULL;
 
-    printf("Cona 233!!!!");
     if (corrida == NULL) {
-        printf("Cona NULL!!!!");
         corrida = nova;
     } else {
         aux = corrida;
-        printf("Cona aux!!!!");
         while (aux->prox != NULL) {
             aux = aux->prox;
         }
@@ -619,7 +616,6 @@ pTreino realizar_corrida(pTreino corrida_treino, pPiloto vpilotos, int *tam_p, p
 
     corrida_treino = liberta_lista_corrida(corrida_treino);
     corrida_treino = configuracao_corrida(corrida_treino, vpilotos, tam_p, vcarros, tam_c);
-    printf("Cona!!!!");
     reduz_falhas(vpilotos, tam_p, vcarros, tam_c);
 
 #ifdef deb

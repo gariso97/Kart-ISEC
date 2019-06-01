@@ -15,8 +15,9 @@
 extern "C" {
 #endif
 
-Camp *campeonato(Camp *camp, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c);
-
+Camp campeonato_corridas(Camp camp, pPiloto vpilotos, int *tam_p, pCarro vcarros, int *tam_c);
+Camp carrega_campeonato(char *campeonatoBin);
+void grava_fich_campeonato(Camp campeonato);
 
 #ifdef __cplusplus
 }
