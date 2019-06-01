@@ -471,8 +471,11 @@ int main(int argc, char** argv) {
                         camp = 1;
                 }else{
                     campeonato = campeonato_corridas(campeonato, vPilotos, &tam_pilotos, vCarros, &tam_carros);
-                    if(campeonato.corridas_total <= 1)
+                    if(campeonato.corridas_total <= 0){
+                        system("cls");
+                        classificacao_final(campeonato, vPilotos, &tam_pilotos);
                         camp = 0;
+                    }
                 }
                 break;
             case 5:

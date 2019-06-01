@@ -244,7 +244,7 @@ pTreino configuracao_corrida(pTreino corrida, pPiloto vp, int *t_p, pCarro vc, i
 }
 
 //funcao que organiza os pares pela pontuacao
-pTreino organiza_pela_pontuacao(pTreino vetor) {
+pTreino organiza_pelo_tempo(pTreino vetor) {
     empar temp;
 
     for (int j = 0; j < vetor->max_pares - 1; j++)
@@ -410,7 +410,7 @@ pTreino corrida_ativa(pTreino corrida, pPiloto vpilotos, int *tam_p, pCarro vcar
             }
         }
     }
-    nova = organiza_pela_pontuacao(nova);
+    nova = organiza_pelo_tempo(nova);
 
 #ifdef deb
     mostra_lista(nova);
@@ -573,9 +573,10 @@ void mostra_classificacao_final(pTreino corrida) {
                 break;
         }
     } while (op != 3);
+    system("cls");
 }
 
-//funcao que liberta a lista da corrida se for treino
+//funcao que liberta a lista da corrida
 pTreino liberta_lista_corrida(pTreino c) {
     pTreino aux;
     while (c != NULL) {
