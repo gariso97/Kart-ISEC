@@ -527,9 +527,9 @@ void penalizacao(pTreino corrida, pPiloto vp, int *t_p) {
 
 //funcao que mostra a classificacao detalhada no final da corrida
 void mostra_classificacao_final(pTreino corrida) {
-    int op, vol, v;
+    int op, vol;
     if (corrida == NULL) {
-        printf("\n[AVISO] Ainda nao foi realizada nenhuma corrida...");
+        printf("\n[AVISO] Ainda nao foi realizada nenhuma corrida nesta sessao...");
         return;
     }
     pTreino c;

@@ -17,8 +17,8 @@ void classificacao_final(Camp camp, pPiloto vp, int *tam){
     printf("\n   ==$|| Classificacao FINAL do Campeonato: ||$==");
     printf("\n#--------------------------------------------------#\n");
     
-     while (c->prox != NULL) {
-         if (flag == 0) {
+     while (c != NULL) {
+        if (flag == 0) {
             vencedor.jogador = c->jogador;
             vencedor.n_corridas = c->n_corridas;
             vencedor.pontuacao = c->pontuacao;
@@ -149,7 +149,7 @@ Camp modifica_pontos_final_corrida(Camp cam, int *t_p) {
                 if(pontos < 0){
                     pontos = 0;
                 }
-                vetor_pontos[i] = vetor_pontos[i] + pontos;
+                vetor_pontos[i] = pontos;
                 vetor_temp[i].n_corridas++;
             }
         }
@@ -161,15 +161,16 @@ Camp modifica_pontos_final_corrida(Camp cam, int *t_p) {
     voltas = cam.ultima_partida;
     while(voltas->prox != NULL){
         voltas = voltas->prox;
-        for (int j = 0; j < (*t_p); j++) {
-            if (vetor_temp[j].jogador.idP == voltas->classif[0].motorista.idP) {
-                vetor_pontos[j] = vetor_pontos[j] + 0.5;
-            }else if (vetor_temp[j].jogador.idP == voltas->classif[0].motorista.idP && voltas->classif[0].abandono != 0) {
+        for (int k = 0; k < voltas->max_pares; k++) {
+            for (int j = 0; j < (*t_p); j++) {
+                if (vetor_temp[j].jogador.idP == voltas->classif[k].motorista.idP && k == 0) {
+                    vetor_pontos[j] = vetor_pontos[j] + 0.5;
+                } else if (vetor_temp[j].jogador.idP == voltas->classif[k].motorista.idP && voltas->classif[k].abandono != 0) {
                     vetor_pontos[j] = 0;
                 }
+            }
         }
     }
-
     for (int j = 0; j < (*t_p); j++) {
         vetor_temp[j].pontuacao = vetor_temp[j].pontuacao + vetor_pontos[j];
     }
@@ -224,7 +225,7 @@ void mostra_classificacao_campeonato(pClass_c classif){
     printf("\n#--------------------------------------------------#");
     printf("\n   ==$|| Classificacao Geral do Campeonato: ||$==");
     printf("\n#--------------------------------------------------#\n");
-     while (c->prox != NULL) {
+     while (c != NULL) {
          printf("\n-> %d <- (ID: %d) %-20s\t| Corridas: %d | Pontos: %.2f", i, c->jogador.idP, c->jogador.nome, c->n_corridas, c->pontuacao);
          i++;
          c = c->prox;
@@ -238,10 +239,9 @@ void mostra_classificacao_campeonato(pClass_c classif){
 
 //funcao que carrega do ficheiro binario o campeonato para a lista ligada
 Camp carrega_campeonato(char *campeonatoBin){
+    int total;
     Camp camp;
     pClass_c novo, classif = NULL;
-    pTreino nova, corrida = NULL;
-    int i, total;
     
     FILE *f = fopen(campeonatoBin, "rb");
     if (f == NULL) {
@@ -249,30 +249,16 @@ Camp carrega_campeonato(char *campeonatoBin){
         return camp;
     }
     
+    fseek(f, 0, SEEK_SET);
     //ler o numero de corridas que ainda falta
     fread(&camp.corridas_total, sizeof (int), 1, f);
     
-    //ler a ultima lista ligada (ultima corrida)
-    fseek(f, -sizeof (int), SEEK_END);
-    fread(&total, sizeof (int), 1, f);
-    for (i = total - 1; i >= 0; i--) {
-        fseek(f, -(sizeof (treino) * i), SEEK_CUR);
-        nova = malloc(sizeof (treino));
-        if (nova == NULL) {
-            printf("\n[ERRO] Alocacao de memoria...\n");
-            fclose(f);
-            return camp;
-        }
-        fread(nova, sizeof (treino), 1, f);
-        nova->prox = corrida;
-        corrida = nova;
-    }
-    camp.ultima_partida = corrida;
     
-    //ler a classificacao do campeonato
-    fread(&total, -sizeof (int), 1, f);
-    for (i = total - 1; i >= 1; i--) {
-        fseek(f, -(sizeof (class_c) * i), SEEK_CUR);
+    fseek(f, -sizeof(int), SEEK_END);
+    fread(&total, sizeof(int), 1, f);
+     //ler a classificacao do campeonato
+    for (int i = total - 1; i >= 0; i--) {
+        fseek(f, sizeof(int) + (sizeof (class_c) * i), SEEK_SET);
         novo = malloc(sizeof (class_c));
         if (novo == NULL) {
             printf("\n[ERRO] Alocacao de memoria...\n");
@@ -284,6 +270,8 @@ Camp carrega_campeonato(char *campeonatoBin){
         classif = novo;
     }
     camp.classif = classif;
+    free(classif);
+    camp.ultima_partida = NULL; 
     
     fclose(f);
     return camp;
@@ -292,29 +280,18 @@ Camp carrega_campeonato(char *campeonatoBin){
 //funcao que grava a lista ligada do campeonato no ficheiro binario
 void grava_fich_campeonato(char *nomefich, Camp c){
     int conta = 0;
-    
     FILE *f = fopen(nomefich, "wb");
     if (f == NULL) {
         printf("\n[ERRO] Criacao do ficheiro...\n");
         return;
     }
-    
     fwrite(&c.corridas_total, sizeof(int), 1, f);
-    
     while (c.classif != NULL) {
         fwrite(c.classif, sizeof(class_c), 1, f);
         c.classif = c.classif->prox;
         conta++;
     }
-    conta = 0;
     fwrite(&conta, sizeof(int), 1, f);
-    while (c.ultima_partida != NULL) {
-        fwrite(c.ultima_partida, sizeof(treino), 1, f);
-        c.ultima_partida = c.ultima_partida->prox;
-        conta++;
-    }
-    fwrite(&conta, sizeof(int), 1, f);
-    
     fclose(f);
 }
 

@@ -431,7 +431,6 @@ int main(int argc, char** argv) {
         camp = 1;
     }else{
         campeonato.corridas_total = 0;
-        campeonato.ultima_partida = NULL;                   //lista ligada de estruturas
         campeonato.classif = NULL;                          //lista ligada de estruturas
     }
     
@@ -444,7 +443,7 @@ int main(int argc, char** argv) {
     do {
         system("cls");
         logotipo();
-        printf("\n               Menu Principal:\n");
+        printf("               Menu Principal:\n");
         printf("#-------------------------------------------#\n");
         printf("\n           1 - Lista de Pilotos");
         printf("\n           2 - Lista de Carros");
