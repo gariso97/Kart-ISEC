@@ -7,22 +7,24 @@
 
 #include "Campeonato.h"
 
+
 //funcao que mostra a classificacao no final do campeonato
 void classificacao_final(Camp camp, pPiloto vp, int *tam){
     pClass_c c = camp.classif;
     class_c vencedor;
     int i = 1, flag = 0;
     printf("\n#--------------------------------------------------#");
-    printf("\n   ==$|| Classificacao Final do Campeonato: ||$==");
+    printf("\n   ==$|| Classificacao FINAL do Campeonato: ||$==");
     printf("\n#--------------------------------------------------#\n");
     
      while (c->prox != NULL) {
-         if (flag = 0) {
+         if (flag == 0) {
             vencedor.jogador = c->jogador;
             vencedor.n_corridas = c->n_corridas;
             vencedor.pontuacao = c->pontuacao;
+            flag = 1;
         }
-         printf("\n-> %d <- (ID: %d) %-20s\t| Corridas: %d | Pontos: %d", i, c->jogador.idP, c->jogador.nome, c->n_corridas, c->pontuacao);
+         printf("\n-> %d <- (ID: %d) %-20s\t| Corridas: %d | Pontos: %.2f", i, c->jogador.idP, c->jogador.nome, c->n_corridas, c->pontuacao);
          i++;
          c = c->prox;
     }
@@ -40,7 +42,7 @@ void classificacao_final(Camp camp, pPiloto vp, int *tam){
     printf("\n#--------------------------------------------------#");
     printf("\n        ==$|| Vencedor do Campeonato: ||$==");
     printf("\n#--------------------------------------------------#\n");
-    printf("\n(ID: %d) %-20s\t| Corridas: %d | Pontos: %d", vencedor.jogador.idP, vencedor.jogador.nome, vencedor.n_corridas, vencedor.pontuacao);
+    printf("\n(ID: %d) %-20s\t| Corridas: %d | Pontos: %.2f", vencedor.jogador.idP, vencedor.jogador.nome, vencedor.n_corridas, vencedor.pontuacao);
     printf("\n\n#--------------------------------------------------#\n");
     printf("\n       Pressione ENTER para continuar...");
     fflush(stdin);
@@ -118,9 +120,14 @@ pClass_c organiza_pela_pontuacao(pClass_c vetor, int tam) {
 //funcao que adiciona pontos aos pilotos
 Camp modifica_pontos_final_corrida(Camp cam, int *t_p) {
     int pontos, i = 0;
+    float vetor_pontos[(*t_p)];
     pClass_c c = cam.classif;
     pTreino voltas = cam.ultima_partida;
     pClass_c vetor_temp = NULL;
+    
+    for (int i = 0; i < (*t_p); i++)
+        vetor_pontos[i] = 0;
+    
     //criacao de um vetor para armazenar modificar e ordenar a classificacao
     vetor_temp = malloc(sizeof(class_c) * (*t_p));
     if (vetor_temp == NULL) {
@@ -142,7 +149,7 @@ Camp modifica_pontos_final_corrida(Camp cam, int *t_p) {
                 if(pontos < 0){
                     pontos = 0;
                 }
-                vetor_temp[i].pontuacao = vetor_temp[i].pontuacao + pontos;
+                vetor_pontos[i] = vetor_pontos[i] + pontos;
                 vetor_temp[i].n_corridas++;
             }
         }
@@ -156,9 +163,15 @@ Camp modifica_pontos_final_corrida(Camp cam, int *t_p) {
         voltas = voltas->prox;
         for (int j = 0; j < (*t_p); j++) {
             if (vetor_temp[j].jogador.idP == voltas->classif[0].motorista.idP) {
-                vetor_temp[j].pontuacao = vetor_temp[j].pontuacao + 0.5;
-            }
+                vetor_pontos[j] = vetor_pontos[j] + 0.5;
+            }else if (vetor_temp[j].jogador.idP == voltas->classif[0].motorista.idP && voltas->classif[0].abandono != 0) {
+                    vetor_pontos[j] = 0;
+                }
         }
+    }
+
+    for (int j = 0; j < (*t_p); j++) {
+        vetor_temp[j].pontuacao = vetor_temp[j].pontuacao + vetor_pontos[j];
     }
     
     vetor_temp = organiza_pela_pontuacao(vetor_temp, *t_p);
@@ -212,7 +225,7 @@ void mostra_classificacao_campeonato(pClass_c classif){
     printf("\n   ==$|| Classificacao Geral do Campeonato: ||$==");
     printf("\n#--------------------------------------------------#\n");
      while (c->prox != NULL) {
-         printf("\n-> %d <- (ID: %d) %-20s\t| Corridas: %d | Pontos: %d", i, c->jogador.idP, c->jogador.nome, c->n_corridas, c->pontuacao);
+         printf("\n-> %d <- (ID: %d) %-20s\t| Corridas: %d | Pontos: %.2f", i, c->jogador.idP, c->jogador.nome, c->n_corridas, c->pontuacao);
          i++;
          c = c->prox;
     }
@@ -225,12 +238,91 @@ void mostra_classificacao_campeonato(pClass_c classif){
 
 //funcao que carrega do ficheiro binario o campeonato para a lista ligada
 Camp carrega_campeonato(char *campeonatoBin){
+    Camp camp;
+    pClass_c novo, classif = NULL;
+    pTreino nova, corrida = NULL;
+    int i, total;
     
+    FILE *f = fopen(campeonatoBin, "rb");
+    if (f == NULL) {
+        printf("\n[ERRO] Abertura do ficheiro...\n");
+        return camp;
+    }
+    
+    //ler o numero de corridas que ainda falta
+    fread(&camp.corridas_total, sizeof (int), 1, f);
+    
+    //ler a ultima lista ligada (ultima corrida)
+    fseek(f, -sizeof (int), SEEK_END);
+    fread(&total, sizeof (int), 1, f);
+    for (i = total - 1; i >= 0; i--) {
+        fseek(f, -(sizeof (treino) * i), SEEK_CUR);
+        nova = malloc(sizeof (treino));
+        if (nova == NULL) {
+            printf("\n[ERRO] Alocacao de memoria...\n");
+            fclose(f);
+            return camp;
+        }
+        fread(nova, sizeof (treino), 1, f);
+        nova->prox = corrida;
+        corrida = nova;
+    }
+    camp.ultima_partida = corrida;
+    
+    //ler a classificacao do campeonato
+    fread(&total, -sizeof (int), 1, f);
+    for (i = total - 1; i >= 1; i--) {
+        fseek(f, -(sizeof (class_c) * i), SEEK_CUR);
+        novo = malloc(sizeof (class_c));
+        if (novo == NULL) {
+            printf("\n[ERRO] Alocacao de memoria...\n");
+            fclose(f);
+            return camp;
+        }
+        fread(novo, sizeof (class_c), 1, f);
+        novo->prox = classif;
+        classif = novo;
+    }
+    camp.classif = classif;
+    
+    fclose(f);
+    return camp;
 }
 
 //funcao que grava a lista ligada do campeonato no ficheiro binario
-void grava_fich_campeonato(Camp campeonato){
+void grava_fich_campeonato(char *nomefich, Camp c){
+    int conta = 0;
     
+    FILE *f = fopen(nomefich, "wb");
+    if (f == NULL) {
+        printf("\n[ERRO] Criacao do ficheiro...\n");
+        return;
+    }
+    
+    fwrite(&c.corridas_total, sizeof(int), 1, f);
+    
+    while (c.classif != NULL) {
+        fwrite(c.classif, sizeof(class_c), 1, f);
+        c.classif = c.classif->prox;
+        conta++;
+    }
+    conta = 0;
+    fwrite(&conta, sizeof(int), 1, f);
+    while (c.ultima_partida != NULL) {
+        fwrite(c.ultima_partida, sizeof(treino), 1, f);
+        c.ultima_partida = c.ultima_partida->prox;
+        conta++;
+    }
+    fwrite(&conta, sizeof(int), 1, f);
+    
+    fclose(f);
+}
+
+//funcao que liberta o campeonato que acabou
+Camp liberta_campeonato(Camp camp){
+    camp.classif = liberta_lista_classif(camp.classif);
+    camp.ultima_partida = liberta_lista_corrida(camp.ultima_partida);
+    return camp;
 }
 
 //funcao onde e chamada a configuracao e executada uma corrida para o campeonato

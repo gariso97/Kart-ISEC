@@ -368,7 +368,7 @@ int certeza_campeonato(){
 }
 
 //funcao que da a escolher ao utilizador se pretende terminar o programa ou nao
-int terminaProg(char *fichpilotos, char *fichcarros, pPiloto vpilotos, int *tam_pilotos, pCarro vcarros, int *tam_carros) {
+int terminaProg(char *fichpilotos, char *fichcarros, char *fichcamp, pPiloto vpilotos, int *tam_pilotos, pCarro vcarros, int *tam_carros, Camp camp) {
 
     int sair;
     
@@ -392,6 +392,7 @@ int terminaProg(char *fichpilotos, char *fichcarros, pPiloto vpilotos, int *tam_
             case 1:
                 return 0;
             case 2:
+                grava_fich_campeonato(fichcamp, camp);                                   //guarda as informacoes do campeonato no ficheiro Campeonato.bin
                 grava_fich_pilotos(fichpilotos, vpilotos, *tam_pilotos);                 //guarda as informacoes dos cliente no ficheiro BaseDados.txt
                 grava_fich_carros(fichcarros,vcarros,*tam_carros);                       //guarda as informacoes das violas no ficheiro Stock.txt
                 exit(0);
@@ -410,11 +411,10 @@ int main(int argc, char** argv) {
     pCarro vCarros = NULL;                              //vetor de estruturas
     pTreino corrida = NULL;                             //lista ligada de estruturas
     Camp campeonato;                                    //estrutura normal
-    campeonato.ultima_partida = NULL;                   //lista ligada de estruturas
-    campeonato.classif = NULL;                          //lista ligada de estruturas
+    
     char *pilotosTxt = "Pilotos.txt";
     char *carrosTxt = "Carros.txt";
-    char *campeonatoBin = "Campeonato.bin";
+    char *campeonatoBin = "Campeonato.dat";
     
     logotipo();
     printf("\n\n       Pressione ENTER para continuar...");
@@ -427,6 +427,13 @@ int main(int argc, char** argv) {
     vPilotos = vetor_pilotos(pilotosTxt, &tam_pilotos);
     vCarros = vetor_carros(carrosTxt, &tam_carros);
     campeonato = carrega_campeonato(campeonatoBin);
+    if(campeonato.corridas_total > 0 && campeonato.corridas_total < 8){
+        camp = 1;
+    }else{
+        campeonato.corridas_total = 0;
+        campeonato.ultima_partida = NULL;                   //lista ligada de estruturas
+        campeonato.classif = NULL;                          //lista ligada de estruturas
+    }
     
 #ifdef deb
     printf("\n\nPressione ENTER para continuar...");
@@ -444,7 +451,7 @@ int main(int argc, char** argv) {
         if(camp != 1){
             printf("\n           3 - Modo Individual");
         }else{
-            printf("\n           3 - Modo Individual (NA)");
+            printf("\n           3 - Modo Individual (Nao Acessivel)");
         }
         printf("\n           4 - Modo Campeonato");
         printf("\n           5 - Sair");
@@ -474,12 +481,13 @@ int main(int argc, char** argv) {
                     if(campeonato.corridas_total <= 0){
                         system("cls");
                         classificacao_final(campeonato, vPilotos, &tam_pilotos);
+                        campeonato = liberta_campeonato(campeonato);
                         camp = 0;
                     }
                 }
                 break;
             case 5:
-                terminaProg(pilotosTxt, carrosTxt, vPilotos, &tam_pilotos, vCarros, &tam_carros);
+                terminaProg(pilotosTxt, carrosTxt, campeonatoBin, vPilotos, &tam_pilotos, vCarros, &tam_carros, campeonato);
                 break;
         }
     } while (1);

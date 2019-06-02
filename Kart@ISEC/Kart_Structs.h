@@ -61,7 +61,7 @@ extern "C" {
     
     typedef struct Classificacao_campeonato class_c, *pClass_c;
     struct Classificacao_campeonato{    //lista ligada com n_voltas estruturas
-        int pontuacao;
+        float pontuacao;
         int n_corridas;
         piloto jogador;
         pClass_c prox;
